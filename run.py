@@ -2,6 +2,7 @@
 """Auto-Scientist: autonomous research loop powered by Claude Code CLI."""
 
 import argparse
+import json
 import os
 import re
 import subprocess
@@ -15,26 +16,99 @@ import yaml
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
-def run_claude(skill_path, round_num, extra_context, allowed_tools, max_tokens, project_dir):
-    """Run claude CLI with a skill prompt."""
-    full_path = os.path.join(project_dir, skill_path)
-    with open(full_path, "r", encoding="utf-8") as f:
-        skill_content = f.read()
+DIM = "\033[2m"
+RESET = "\033[0m"
 
+def run_claude(skill_name, round_num, extra_context, project_dir, model="sonnet", debug=False):
+    """Run claude CLI with a skill prompt.
+
+    Skills are auto-loaded from .claude/skills/ by the CLI, so we just
+    reference the skill by name in the prompt.
+    """
     prompt = (
-        f"{skill_content}\n\n---\n\n"
+        f"Use the {skill_name} skill.\n\n"
         f"Current round number: {round_num}\n"
         f"Project directory: {project_dir}\n"
         f"{extra_context}"
     )
 
-    cmd = [
-        "claude", "-p", prompt,
-        "--allowedTools", allowed_tools,
-        "--max-tokens", str(max_tokens),
-    ]
+    cmd = ["claude", "-p", prompt, "--model", model, "--dangerously-skip-permissions"]
 
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd=project_dir)
+    if debug:
+        print(f"{DIM}  ┌─ {skill_name} ({model}) ─────────────────────{RESET}")
+        stream_cmd = cmd + ["--output-format", "stream-json", "--verbose"]
+        proc = subprocess.Popen(
+            stream_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            text=True, cwd=project_dir,
+        )
+        full_result = ""
+        for line in proc.stdout:
+            line = line.rstrip("\n")
+            if not line:
+                continue
+            try:
+                msg = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            mtype = msg.get("type", "")
+            if mtype == "assistant":
+                # Extract text from content blocks
+                content = msg.get("message", {}).get("content", [])
+                if isinstance(content, list):
+                    for block in content:
+                        if isinstance(block, dict):
+                            if block.get("type") == "text":
+                                text = block.get("text", "")
+                                if text:
+                                    for tl in text.splitlines():
+                                        print(f"  │ {tl}", flush=True)
+                                    full_result += text
+                            elif block.get("type") == "tool_use":
+                                tool = block.get("name", "?")
+                                inp = block.get("input", {})
+                                # Show tool name + compact summary of input
+                                summary = ""
+                                if "command" in inp:
+                                    summary = f" $ {inp['command'][:80]}"
+                                elif "file_path" in inp:
+                                    summary = f" {inp['file_path']}"
+                                elif "pattern" in inp:
+                                    summary = f" {inp['pattern']}"
+                                elif "skill_name" in inp:
+                                    summary = f" {inp['skill_name']}"
+                                print(f"{DIM}  │ 🔧 {tool}{summary}{RESET}", flush=True)
+                elif isinstance(content, str) and content:
+                    for tl in content.splitlines():
+                        print(f"  │ {tl}", flush=True)
+                    full_result += content
+            elif mtype == "result":
+                content = msg.get("result", "")
+                if content:
+                    full_result = content
+                cost = msg.get("cost_usd")
+                duration = msg.get("duration_ms")
+                info_parts = []
+                if cost is not None:
+                    info_parts.append(f"${cost:.4f}")
+                if duration is not None:
+                    info_parts.append(f"{duration / 1000:.1f}s")
+                if info_parts:
+                    print(f"{DIM}  │ ⏱  {' · '.join(info_parts)}{RESET}", flush=True)
+            elif mtype in ("system", "user", "rate_limit_event"):
+                pass  # known noise, skip
+            else:
+                # Truly unknown message type — print raw for debugging
+                print(f"{DIM}  │ [{mtype}] {line[:300]}{RESET}", flush=True)
+        stderr = proc.stderr.read()
+        proc.wait()
+        status = "✓" if proc.returncode == 0 else f"✗ exit {proc.returncode}"
+        print(f"{DIM}  └─ {status} ─────────────────────────────────{RESET}")
+        result = subprocess.CompletedProcess(
+            args=stream_cmd, returncode=proc.returncode,
+            stdout=full_result, stderr=stderr,
+        )
+    else:
+        result = subprocess.run(cmd, capture_output=True, text=True, cwd=project_dir)
     return result
 
 
@@ -190,6 +264,8 @@ def main():
     parser.add_argument("--rounds", type=int, default=10, help="Number of research rounds (default: 10)")
     parser.add_argument("--start", type=int, default=1, help="Starting round number, for resuming (default: 1)")
     parser.add_argument("--project-dir", type=str, default=os.getcwd(), help="Project root directory (default: cwd)")
+    parser.add_argument("--model", type=str, default="sonnet", help="Claude model to use (default: sonnet)")
+    parser.add_argument("--debug", action="store_true", help="Stream Claude output in real-time for debugging")
     args = parser.parse_args()
 
     project_dir = os.path.abspath(args.project_dir)
@@ -211,12 +287,12 @@ def main():
         # ── Phase 1: Theorist ────────────────────────────────────────────
         print_phase(1, 3, "Theorist generating proposal...")
         result = run_claude(
-            skill_path=".claude/skills/theorist/SKILL.md",
+            skill_name="theorist",
             round_num=round_num,
             extra_context=f"Output file: proposals/proposal_{padded}.md",
-            allowed_tools="Read,Write,Glob,Grep",
-            max_tokens=16000,
             project_dir=project_dir,
+            model=args.model,
+            debug=args.debug,
         )
         proposal_path = os.path.join(project_dir, f"proposals/proposal_{padded}.md")
         if result.returncode != 0:
@@ -233,15 +309,15 @@ def main():
         # ── Phase 2: Critic ──────────────────────────────────────────────
         print_phase(2, 3, "Critic reviewing proposal...")
         result = run_claude(
-            skill_path=".claude/skills/critic/SKILL.md",
+            skill_name="critic",
             round_num=round_num,
             extra_context=(
                 f"Proposal to review: proposals/proposal_{padded}.md\n"
                 f"Output file: reviews/review_{padded}.md"
             ),
-            allowed_tools="Read,Write,Glob,Grep",
-            max_tokens=8000,
             project_dir=project_dir,
+            model=args.model,
+            debug=args.debug,
         )
         review_path = os.path.join(project_dir, f"reviews/review_{padded}.md")
         if result.returncode != 0:
@@ -268,15 +344,15 @@ def main():
         # ── Phase 3: Synthesizer ─────────────────────────────────────────
         print_phase(3, 3, "Synthesizer updating memory...")
         result = run_claude(
-            skill_path=".claude/skills/synthesizer/SKILL.md",
+            skill_name="synthesizer",
             round_num=round_num,
             extra_context=(
                 f"Latest proposal: proposals/proposal_{padded}.md\n"
                 f"Latest review: reviews/review_{padded}.md"
             ),
-            allowed_tools="Read,Write,Glob,Grep,Bash",
-            max_tokens=8000,
             project_dir=project_dir,
+            model=args.model,
+            debug=args.debug,
         )
         if result.returncode != 0:
             print_err(f"Synthesizer failed (exit {result.returncode})")

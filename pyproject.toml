@@ -1,0 +1,10 @@
+[project]
+name = "auto-scientists"
+version = "0.1.0"
+description = "Autonomous research loop system, powered by Claude Code CLI."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.10.8",
+    "pyyaml>=6.0.3",
+]

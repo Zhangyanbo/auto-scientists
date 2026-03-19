@@ -7,3 +7,10 @@ dist/
 build/
 .venv/
 venv/
+
+# Research results
+proposals/*.md
+reviews/*.md
+syntheses/*.md
+memory/*.md
+config/*.md
