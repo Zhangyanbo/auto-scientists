@@ -24,8 +24,10 @@ The agents are informationally isolated to prevent bias: the Theorist never read
 
 Prerequisites: Python >= 3.11, [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), [uv](https://docs.astral.sh/uv/) (or pip).
 
+First, fork this repo on GitHub — the loop automatically commits and pushes results, so you need your own repo to write to.
+
 ```bash
-git clone <repo-url>
+git clone https://github.com/<your-username>/auto-scientists.git
 cd auto-scientists
 uv sync          # or: pip install -r requirements.txt
 ```
