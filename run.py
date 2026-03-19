@@ -23,9 +23,14 @@ DIM = "\033[2m"
 RESET = "\033[0m"
 
 
-def load_skill(skill_name):
-    """Load skill content from the skills/ directory next to this script."""
-    skill_path = os.path.join(SKILLS_DIR, f"{skill_name}.md")
+def load_skill(skill_name, project_dir):
+    """Load skill content. Project's .claude/skills/ takes priority over install dir."""
+    # Project-local skill (Claude Code convention)
+    local_path = os.path.join(project_dir, ".claude", "skills", skill_name, "SKILL.md")
+    # Fallback: install directory
+    install_path = os.path.join(SKILLS_DIR, f"{skill_name}.md")
+
+    skill_path = local_path if os.path.isfile(local_path) else install_path
     with open(skill_path, "r", encoding="utf-8") as f:
         content = f.read()
     # Strip YAML frontmatter (metadata for Claude Code, not needed in prompt)
@@ -35,7 +40,7 @@ def load_skill(skill_name):
 
 def run_claude(skill_name, round_num, extra_context, project_dir, model="sonnet", debug=False):
     """Run claude CLI with skill instructions passed directly in the prompt."""
-    skill_content = load_skill(skill_name)
+    skill_content = load_skill(skill_name, project_dir)
     prompt = (
         f"{skill_content}\n\n"
         f"Current round number: {round_num}\n"

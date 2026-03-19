@@ -158,18 +158,35 @@ Free exploration. No historical data yet — the Theorist should try multiple di
 Build basic understanding of the problem and produce at least 2-3 diverse initial Proposals.
 ```
 
+## Phase 5: Install Skills
+
+Goal: Copy the three loop skills into the project's `.claude/skills/` directory.
+
+This phase requires no user input. After completing Phases 1-4, copy the skill files from the Auto-Scientist install directory (`~/.auto-research/skills/`) into the project:
+
+```
+~/.auto-research/skills/theorist.md     → .claude/skills/theorist/SKILL.md
+~/.auto-research/skills/critic.md       → .claude/skills/critic/SKILL.md
+~/.auto-research/skills/synthesizer.md  → .claude/skills/synthesizer/SKILL.md
+```
+
+Create the directories if they don't exist. Copy the files exactly as they are.
+
 # Completion
 
-After creating all five files, present a summary to the user:
+After creating all files, present a summary to the user:
 
 ```
 Research project initialized. Created:
 
-  config/problem.md      — Research problem definition
-  config/constraints.md  — Hard constraints and soft preferences
-  config/eval_rubric.md  — Evaluation rubric (100 points total)
-  memory/lessons.md      — Lessons learned (empty template)
-  memory/directive.md    — Initial directive (EXPLORE)
+  config/problem.md                      — Research problem definition
+  config/constraints.md                  — Hard constraints and soft preferences
+  config/eval_rubric.md                  — Evaluation rubric (100 points total)
+  memory/lessons.md                      — Lessons learned (empty template)
+  memory/directive.md                    — Initial directive (EXPLORE)
+  .claude/skills/theorist/SKILL.md       — Theorist agent
+  .claude/skills/critic/SKILL.md         — Critic agent
+  .claude/skills/synthesizer/SKILL.md    — Synthesizer agent
 
 You can now start the research loop.
 ```
