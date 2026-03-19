@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# When piped via curl | bash, stdin is the pipe. Reopen from terminal.
+if [ ! -t 0 ]; then
+  exec < /dev/tty
+fi
+
 INSTALL_DIR="$HOME/.auto-research"
 SKILL_DIR="$HOME/.claude/skills/init-auto-research"
 BIN_DIR="$HOME/.local/bin"
@@ -12,7 +17,7 @@ echo
 echo "Which Python runner do you use?"
 echo "  1) uv (recommended)"
 echo "  2) python"
-read -p "Choose [1/2]: " choice < /dev/tty
+read -p "Choose [1/2]: " choice
 
 case $choice in
   1) RUNNER="uv run --project \"$INSTALL_DIR\"" ;;
