@@ -12,7 +12,7 @@ echo
 echo "Which Python runner do you use?"
 echo "  1) uv (recommended)"
 echo "  2) python"
-read -p "Choose [1/2]: " choice
+read -p "Choose [1/2]: " choice < /dev/tty
 
 case $choice in
   1) RUNNER="uv run --project \"$INSTALL_DIR\"" ;;
