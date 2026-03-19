@@ -1,10 +1,10 @@
 ---
 name: critic
 description: >
-  对 Theorist 产出的 Paper 进行双重标准检验：
-  用户的外部评估标准 + Paper 自带的 Commitments。
-  产出结构化的 Verification 报告。
-  在自主研究循环中由脚本调用，不应被用户直接触发。
+  Evaluate Theorist's Paper against dual standards:
+  user-defined external criteria + the Paper's own Commitments.
+  Produce a structured Verification report.
+  Called by the script during autonomous research loops, not user-invocable.
 user-invocable: false
 ---
 
@@ -100,56 +100,56 @@ commitment_scores:
   commitment_3: 60
 commitment_average: 58.3
 summary: >
-  一句话总结检验结论。如果有错误，简要指出。
+  One-sentence summary of the verification conclusion. Briefly note any errors found.
 verdict: "PROMISING"
 ---
 
 # Verification of Proposal NNN
 
-## User Criteria Evaluation（用户标准检验）
+## User Criteria Evaluation
 
-针对 eval_rubric.md 中的每一条标准，逐条评分（满分 100）并给出理由。
+Score each criterion from eval_rubric.md individually (out of 100) with rationale.
 
-### Criterion 1: [标准名称]
+### Criterion 1: [Criterion Name]
 **Score: XX/100**
-[评分理由]
+[Rationale]
 
-### Criterion 2: [标准名称]
+### Criterion 2: [Criterion Name]
 **Score: XX/100**
-[评分理由]
+[Rationale]
 
-...（逐条列出）
+...(list all criteria)
 
 **User Criteria Average: XX**
 
-## Commitment Verification（承诺检验）
+## Commitment Verification
 
-针对 Paper 中每一条 Commitment，逐条评分（满分 100）并给出理由。
+Score each Commitment from the Paper individually (out of 100) with rationale.
 
-### Commitment 1: [承诺内容摘要]
+### Commitment 1: [Commitment Summary]
 **Score: XX/100**
-[验证过程：尝试推导、构造反例等]
+[Verification process: derivation attempts, counterexample construction, etc.]
 
-### Commitment 2: [承诺内容摘要]
+### Commitment 2: [Commitment Summary]
 **Score: XX/100**
-[验证过程]
+[Verification process]
 
-...（逐条列出）
+...(list all commitments)
 
 **Commitment Average: XX**
 
-## Error Analysis（错误分析）
+## Error Analysis
 
-如果发现错误，详细说明：
-- 错误的位置（在 Background / Method / Commitments 的哪个部分）
-- 错误的严重程度（大错：逻辑根基有问题 / 小错：可修复的技术细节）
-- 错误的原因
+If errors are found, detail:
+- Location (in Background / Method / Commitments)
+- Severity (Major: foundational logic is broken / Minor: fixable technical detail)
+- Cause of the error
 
-## Overall Assessment（总体评估）
+## Overall Assessment
 
 Verdict: STRONG / PROMISING / WEAK / REJECT
 
-[总结性评价]
+[Summary evaluation]
 ```
 
 In the YAML frontmatter, use the actual criterion names from `eval_rubric.md` as keys under `user_criteria_scores`, and use short descriptive labels for each commitment under `commitment_scores`. Compute the averages arithmetically.

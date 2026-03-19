@@ -1,9 +1,10 @@
 ---
 name: init-research
 description: >
-  初始化一个新的自主研究项目。引导用户定义研究问题、约束条件、
-  评估标准，产出 config/ 目录下的三个文件。
-  仅在交互模式下由用户通过 /init-research 触发。
+  Initialize a new autonomous research project. Guide the user through
+  defining the research problem, constraints, and evaluation criteria.
+  Produce three files under config/. Only triggered by user via /init-research
+  in interactive mode.
 disable-model-invocation: true
 ---
 
@@ -15,7 +16,7 @@ This is an interactive skill — it asks the user questions, listens to their an
 
 # Dialog Flow
 
-## Phase 1: 理解问题
+## Phase 1: Understand the Problem
 
 Goal: Produce `config/problem.md`.
 
@@ -44,7 +45,7 @@ Keep asking until you can write a clear, specific problem statement. Then draft 
 [Brief context — what's known, what's been tried, why it matters]
 ```
 
-## Phase 2: 确定边界
+## Phase 2: Define Boundaries
 
 Goal: Produce `config/constraints.md`.
 
@@ -72,7 +73,7 @@ Draft and confirm with the user:
 - [explicitly excluded topics or approaches]
 ```
 
-## Phase 3: 设计评估标准
+## Phase 3: Design Evaluation Criteria
 
 Goal: Produce `config/eval_rubric.md`.
 
@@ -109,7 +110,7 @@ Total: 100 points
 - Include at least one dimension for novelty/insight and one for rigor/correctness
 - If the user struggles to articulate criteria, suggest common research dimensions: correctness, novelty, depth, clarity, generalizability, elegance
 
-## Phase 4: 初始化记忆
+## Phase 4: Initialize Memory
 
 Goal: Create `memory/lessons.md` and `memory/directive.md`.
 
@@ -149,13 +150,13 @@ Initialize with the default exploration strategy:
 EXPLORE
 
 ## Direction
-自由探索。尚无历史数据，Theorist 应尝试多种不同的切入角度。
+Free exploration. No historical data yet — the Theorist should try multiple different angles of approach.
 
 ## Avoid
 (no known dead ends yet)
 
 ## Priority
-建立对问题的基本理解，产出至少 2-3 个有差异性的初始 Proposal。
+Build basic understanding of the problem and produce at least 2-3 diverse initial Proposals.
 ```
 
 # Completion

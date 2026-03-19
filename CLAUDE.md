@@ -1,36 +1,36 @@
 # Auto-Scientist
 
-自主研究循环系统，基于 Claude Code CLI。
+Autonomous research loop system, powered by Claude Code CLI.
 
-## 项目结构
+## Project Structure
 
-- `config/` — 研究配置（problem.md, constraints.md, eval_rubric.md）
-- `memory/` — 系统记忆（lessons.md, directive.md）
-- `proposals/` — Theorist 产出的理论提案
-- `reviews/` — Critic 产出的审查报告
-- `syntheses/` — Synthesizer 产出的综合快照
-- `run.py` — 主循环脚本
+- `config/` — Research configuration (problem.md, constraints.md, eval_rubric.md)
+- `memory/` — System memory (lessons.md, directive.md)
+- `proposals/` — Theorist output (theory proposals)
+- `reviews/` — Critic output (verification reports)
+- `syntheses/` — Synthesizer output (progress snapshots)
+- `run.py` — Main loop script
 
-## 角色隔离规则
+## Role Isolation Rules
 
-- **Theorist** 读取: config/problem.md, config/constraints.md, memory/lessons.md, memory/directive.md
-  - 不读 reviews/ 目录
-- **Critic** 读取: proposals/proposal_NNN.md, config/eval_rubric.md, config/constraints.md
-  - 不读 memory/lessons.md, memory/directive.md
-- **Synthesizer** 读取: 所有 proposals/, 所有 reviews/, memory/lessons.md, config/problem.md, config/constraints.md
+- **Theorist** reads: config/problem.md, config/constraints.md, memory/lessons.md, memory/directive.md
+  - Does NOT read reviews/ directory
+- **Critic** reads: proposals/proposal_NNN.md, config/eval_rubric.md, config/constraints.md
+  - Does NOT read memory/lessons.md, memory/directive.md
+- **Synthesizer** reads: all proposals/, all reviews/, memory/lessons.md, config/problem.md, config/constraints.md
 
-## 文件限制
+## File Limits
 
-- `memory/lessons.md` 不超过 1000 字
-- `reviews/review_NNN.md` 不超过 2000 字
+- `memory/lessons.md` must not exceed 1000 words
+- `reviews/review_NNN.md` must not exceed 2000 words
 
-## Git Commit 格式
+## Git Commit Format
 
 ```
-R{NNN}: {一句话概括}
+R{NNN}: {one-line summary}
 ```
 
-## 运行
+## Running
 
 ```bash
 uv pip install -r requirements.txt
