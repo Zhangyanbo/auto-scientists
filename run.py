@@ -16,17 +16,28 @@ import yaml
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
+INSTALL_DIR = os.path.dirname(os.path.abspath(__file__))
+SKILLS_DIR = os.path.join(INSTALL_DIR, "skills")
+
 DIM = "\033[2m"
 RESET = "\033[0m"
 
-def run_claude(skill_name, round_num, extra_context, project_dir, model="sonnet", debug=False):
-    """Run claude CLI with a skill prompt.
 
-    Skills are auto-loaded from .claude/skills/ by the CLI, so we just
-    reference the skill by name in the prompt.
-    """
+def load_skill(skill_name):
+    """Load skill content from the skills/ directory next to this script."""
+    skill_path = os.path.join(SKILLS_DIR, f"{skill_name}.md")
+    with open(skill_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    # Strip YAML frontmatter (metadata for Claude Code, not needed in prompt)
+    stripped = re.sub(r"^---\s*\n.*?\n---\s*\n", "", content, count=1, flags=re.DOTALL)
+    return stripped
+
+
+def run_claude(skill_name, round_num, extra_context, project_dir, model="sonnet", debug=False):
+    """Run claude CLI with skill instructions passed directly in the prompt."""
+    skill_content = load_skill(skill_name)
     prompt = (
-        f"Use the {skill_name} skill.\n\n"
+        f"{skill_content}\n\n"
         f"Current round number: {round_num}\n"
         f"Project directory: {project_dir}\n"
         f"{extra_context}"

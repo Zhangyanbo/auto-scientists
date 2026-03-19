@@ -8,9 +8,10 @@ build/
 .venv/
 venv/
 
-# Research results
+# Research results (generated in user projects, not in this repo)
 proposals/*.md
 reviews/*.md
 syntheses/*.md
+syntheses/*.png
 memory/*.md
 config/*.md

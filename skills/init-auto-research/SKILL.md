@@ -1,14 +1,13 @@
 ---
-name: init-research
+name: init-auto-research
 description: >
   Initialize a new autonomous research project. Guide the user through
   defining the research problem, constraints, and evaluation criteria.
-  Produce three files under config/. Only triggered by user via /init-research
-  in interactive mode.
+  Produce config files and memory files for the auto-research loop.
 disable-model-invocation: true
 ---
 
-# Init Research
+# Init Auto-Research
 
 This skill initializes a new autonomous research project through an interactive dialog with the user. It produces five files across two directories (`config/` and `memory/`) that form the foundation for all subsequent research rounds.
 

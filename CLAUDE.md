@@ -4,12 +4,17 @@ Autonomous research loop system, powered by Claude Code CLI.
 
 ## Project Structure
 
+- `skills/` — Agent skill definitions (theorist.md, critic.md, synthesizer.md, init-auto-research/)
+- `run.py` — Main loop script (reads skills directly, passes content in prompt)
+- `install.sh` — Installer (sets up global CLI + Claude Code skill)
+
+## User Project Structure (created by /init-auto-research)
+
 - `config/` — Research configuration (problem.md, constraints.md, eval_rubric.md)
 - `memory/` — System memory (lessons.md, directive.md)
 - `proposals/` — Theorist output (theory proposals)
 - `reviews/` — Critic output (verification reports)
-- `syntheses/` — Synthesizer output (progress snapshots)
-- `run.py` — Main loop script
+- `syntheses/` — Synthesizer output (progress chart)
 
 ## Role Isolation Rules
 
@@ -28,11 +33,4 @@ Autonomous research loop system, powered by Claude Code CLI.
 
 ```
 R{NNN}: {one-line summary}
-```
-
-## Running
-
-```bash
-uv pip install -r requirements.txt
-python run.py --rounds 10
 ```
