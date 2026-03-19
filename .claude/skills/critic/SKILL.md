@@ -43,6 +43,7 @@ Read the Proposal thoroughly. Identify:
 - The logical chain connecting background, method, and conclusions
 
 Read `config/eval_rubric.md` and `config/constraints.md` to understand what you are measuring against.
+DO NOT read previous reviews in `./reviews/` to avoid been affect by previous results.
 
 ### Step 2: User Criteria Evaluation
 
