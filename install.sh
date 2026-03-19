@@ -1,11 +1,6 @@
 #!/bin/bash
 set -e
 
-# When piped via curl | bash, stdin is the pipe. Reopen from terminal.
-if [ ! -t 0 ]; then
-  exec < /dev/tty
-fi
-
 INSTALL_DIR="$HOME/.auto-research"
 SKILL_DIR="$HOME/.claude/skills/init-auto-research"
 BIN_DIR="$HOME/.local/bin"

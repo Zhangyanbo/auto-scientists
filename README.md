@@ -23,7 +23,7 @@ The agents are informationally isolated to prevent bias: the Theorist never read
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Zhangyanbo/auto-scientists/main/install.sh | bash
+bash <(curl -fsSL https://raw.githubusercontent.com/Zhangyanbo/auto-scientists/main/install.sh)
 ```
 
 The installer will ask whether you use `uv` or `python`, then set up:
