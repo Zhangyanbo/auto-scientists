@@ -29,14 +29,6 @@ else
   git clone https://github.com/Zhangyanbo/auto-scientists.git "$INSTALL_DIR"
 fi
 
-# Install Python dependencies
-echo "Installing dependencies..."
-if [ "$choice" = "1" ]; then
-  (cd "$INSTALL_DIR" && uv sync)
-else
-  pip install -r "$INSTALL_DIR/requirements.txt"
-fi
-
 # Install init-auto-research as a global Claude Code skill
 echo "Installing Claude Code skill..."
 mkdir -p "$SKILL_DIR"
